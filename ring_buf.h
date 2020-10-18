@@ -71,7 +71,7 @@ public:
 // \tparam iterator Custom iterator for ring buffer type.
 template<class T, size_t N, class iterator>
 class ring_buf_base {
-public:
+protected:
     T buf[N] = {};
     size_t head = 0;    // First item index / beginning of the buffer.
     size_t tail = 0;    // Last item index.
