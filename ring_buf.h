@@ -4,13 +4,10 @@
 // Undef to overwrite old values when buffer is full.
 #define RING_BUF_NODISCARD
 
-template<size_t N>
 // Greater or equal to 2 constraint.
-using ge_2 = std::enable_if_t<N >= 2>*;
-
-template<size_t N>
+template<size_t N> concept ge_2 = N >= 2;
 // Power of 2 constraint.
-using pow_2 = std::enable_if_t<(N & (N - 1)) == 0>*;
+template<size_t N> concept pow_2 = ge_2<N> && (N & (N - 1)) == 0;
 
 
 // SECTION Iterators
@@ -91,7 +88,7 @@ public:
 // Uses modulo and N-1 elements logic, so it can have arbitrary storage of N-1 size.
 // \tparam T Data type to be stored.
 // \tparam N Max buffer size. Must be >= 2.
-template<class T, size_t N, ge_2<N> = nullptr>
+template<class T, ge_2 N>
 class ring_buf_ver_1 : public ring_buf_base<T, N, ring_iterator_mod<T, N>> {
     using ring_buf_ver_1::ring_buf_base::head;
     using ring_buf_ver_1::ring_buf_base::tail;
@@ -122,7 +119,7 @@ public:
 // Uses pow_2 and N-1 elements logic. Provides storage capacity of N-1.
 // \tparam T Data type to be stored.
 // \tparam N Max buffer size. Must be power of 2 and >= 2.
-template<class T, size_t N, ge_2<N> = nullptr, pow_2<N> = nullptr>
+template<class T, pow_2 N>
 class ring_buf_ver_2 : public ring_buf_base<T, N, ring_iterator_pow_inc<T, N - 1>> {
     using ring_buf_ver_2::ring_buf_base::head;
     using ring_buf_ver_2::ring_buf_base::tail;
@@ -153,7 +150,7 @@ public:
 // Uses pow_2 and (read + length) indexing logic. Provides storage capacity of N.
 // \tparam T Data type to be stored.
 // \tparam N Max buffer size. Must be power of 2.
-template<class T, size_t N, pow_2<N> = nullptr>
+template<class T, pow_2 N>
 class ring_buf_ver_3 : public ring_buf_base<T, N, ring_iterator_pow_ref<T, N - 1>> {
 public:
     using ring_buf_ver_3::ring_buf_base::head;  // Consider as read index here.
@@ -189,7 +186,7 @@ public:
 // Uses pow_2 and unmasked indices logic. Provides storage capacity of N
 // \tparam T Data type to be stored.
 // \tparam N Max buffer size. Must be power of 2.
-template<class T, size_t N, pow_2<N> = nullptr>
+template<class T, pow_2 N> 
 class ring_buf_ver_4 : public ring_buf_base<T, N, ring_iterator_pow_ref<T, N - 1>> {
     using ring_buf_ver_4::ring_buf_base::head;
     using ring_buf_ver_4::ring_buf_base::tail;
