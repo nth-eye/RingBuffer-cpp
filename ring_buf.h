@@ -81,8 +81,8 @@ public:
     const iterator begin() const            { return iterator(buf, head); }
     const iterator end() const              { return iterator(buf, tail); }
     const T& operator[](size_t idx) const   { return buf[idx]; }
-    const T& front() const					{ return operator[](head); }
-    const T& back() const					{ return operator[](tail); }
+    const T& front() const                  { return operator[](head); }
+    const T& back() const                   { return operator[](tail); }
 };
 
 // Uses modulo and N-1 elements logic, so it can have arbitrary storage of N-1 size.
